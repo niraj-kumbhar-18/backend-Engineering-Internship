@@ -94,5 +94,42 @@ def add_task(title):
         return get_task_by_id(task_id)
     
     
+def update_task(task_id, title, completed):
+    with get_connection() as connection:
+        cursor = connection.cursor()
+        
+        cursor.execute(""" 
+                       UPDATE tasks
+                       SET title = ? , completed = ?
+                       WHERE id = ?
+                       """, 
+                       (title, completed, task_id)
+                       )
+        
+        connection.commit()
+        
+        if cursor.rowcount == 0:
+            return None
+        
+        return get_task_by_id(task_id)
+
+
+def delete_task(task_id):
+    with get_connection() as connection:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            "DELETE FROM tasks WHERE id = ?",
+            (task_id,)
+        )
+
+        if cursor.rowcount == 0:
+            return False
+
+        connection.commit()
+
+        return True
+    
+        
 create_table()
 seed_tasks()
