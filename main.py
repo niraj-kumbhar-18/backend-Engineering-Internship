@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException , status
 from schemas import TaskCreate, TaskUpdate
-from database import get_all_tasks, get_task_by_id
+from database import get_all_tasks, get_task_by_id, add_task
 
 app = FastAPI()
 
@@ -54,7 +54,6 @@ def get_task(id: int):
     return task
 
 
-
 @app.post("/tasks",status_code = status.HTTP_201_CREATED)
 def create_task(task: TaskCreate):
      
@@ -64,15 +63,7 @@ def create_task(task: TaskCreate):
             detail="Title cannot be empty"
         )
         
-     new_task = {
-          "id": max(task["id"] for task in tasks) + 1,
-          "title": task.title,
-          "completed": False,
-     }
-     
-     tasks.append(new_task)
-     return new_task
-
+     return add_task(task.title)
 
 
 @app.put("/tasks/{id}")
