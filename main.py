@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException , status
 from schemas import TaskCreate, TaskUpdate
+from database import get_all_tasks, get_task_by_id
 
 app = FastAPI()
 
@@ -39,16 +40,18 @@ def health():
 
 @app.get("/tasks")
 def task():
-     return tasks
+     return get_all_tasks()
 
 
 
 @app.get("/tasks/{id}")
 def get_task(id: int):
-    for task in tasks:
-        if task["id"] == id:
-            return task
-    raise HTTPException(status_code=404, detail="Task not found")     
+    task = get_task_by_id(id)
+
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    return task
 
 
 
