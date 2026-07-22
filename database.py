@@ -62,6 +62,47 @@ def get_all_tasks():
             for row in rows
         ]
         
+def search_tasks(search):
+    with get_connection() as connection:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            "SELECT * FROM tasks WHERE title LIKE ?",
+            (f"%{search}%",)
+        )
+
+        rows = cursor.fetchall()
+
+        return [
+            {
+                "id": row[0],
+                "title": row[1],
+                "completed": bool(row[2])
+            }
+            for row in rows
+        ]
+
+
+def get_tasks_by_status(completed):
+    with get_connection() as connection:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            "SELECT * FROM tasks WHERE completed = ?",
+            (completed,)
+        )
+
+        rows = cursor.fetchall()
+
+        return [
+            {
+                "id": row[0],
+                "title": row[1],
+                "completed": bool(row[2])
+            }
+            for row in rows
+        ]
+        
         
 def get_task_by_id(task_id):
     with get_connection() as connection:
